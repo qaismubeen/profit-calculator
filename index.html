@@ -5,6 +5,7 @@
 <title>Profit Calculator</title>
 
 <style>
+    /* BODY & BACKGROUND */
     body {
         margin: 0;
         min-height: 100vh;
@@ -14,12 +15,13 @@
         font-family: "Segoe UI", sans-serif;
         background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
         color: #fff;
-        padding: 10px; /* small padding for mobile */
+        padding: 10px;
     }
 
+    /* CONTAINER */
     .container {
-        width: 500px;
-        max-width: 100%;
+        width: 100%;
+        max-width: 500px;  /* desktop max */
         background: rgba(255,255,255,0.12);
         border-radius: 22px;
         padding: 30px;
@@ -34,6 +36,7 @@
         font-size: 26px;
     }
 
+    /* INPUT FIELDS */
     .field {
         margin-bottom: 16px;
     }
@@ -47,7 +50,7 @@
 
     input, select {
         width: 100%;
-        padding: 10px 12px;
+        padding: 12px 14px;
         border-radius: 10px;
         border: none;
         outline: none;
@@ -84,7 +87,6 @@
         font-weight: 500;
     }
 
-    /* HEADINGS WITHOUT COLOR */
     .heading {
         background: none;
         padding: 6px 0;
@@ -94,7 +96,6 @@
         letter-spacing: 0.5px;
     }
 
-    /* STRONG COLORS */
     .blue { background: #0288d1; }
     .purple { background: #7b1fa2; }
     .red { background: #c62828; }
@@ -108,31 +109,32 @@
         opacity: 0.75;
     }
 
-    /* ---------------- MOBILE RESPONSIVE ---------------- */
+    /* ------------------ MOBILE RESPONSIVE ------------------ */
     @media (max-width: 600px) {
         .container {
-            width: 100%;
+            width: 95%; /* almost full width on mobile */
             padding: 20px;
         }
         h1 {
             font-size: 22px;
         }
-        .heading {
-            font-size: 18px;
+        input, select {
+            font-size: 16px;
+            padding: 14px 12px;
+        }
+        button {
+            font-size: 16px;
+            padding: 14px;
         }
         .box {
             font-size: 15px;
             padding: 12px 14px;
         }
-        input, select {
-            font-size: 14px;
-            padding: 9px 10px;
-        }
-        button {
-            font-size: 15px;
-            padding: 12px;
+        .heading {
+            font-size: 18px;
         }
     }
+
 </style>
 </head>
 
