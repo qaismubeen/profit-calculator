@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Profit Calculator</title>
+<title>Advanced Profit Calculator</title>
 
 <style>
     body {
@@ -11,35 +11,39 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-        font-family: Arial, sans-serif;
-        color: white;
+        font-family: "Segoe UI", sans-serif;
+        background:
+            radial-gradient(circle at top left, #1a2a6c, transparent 40%),
+            radial-gradient(circle at bottom right, #fdbb2d, transparent 40%),
+            linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+        color: #fff;
     }
 
-    .card {
-        width: 420px;
+    .container {
+        width: 460px;
         background: rgba(255, 255, 255, 0.12);
-        padding: 25px;
-        border-radius: 18px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        backdrop-filter: blur(12px);
+        border-radius: 22px;
+        padding: 30px;
+        box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+        backdrop-filter: blur(14px);
     }
 
     h1 {
         text-align: center;
-        margin-bottom: 20px;
-        font-size: 24px;
+        margin-bottom: 25px;
+        font-size: 26px;
+        letter-spacing: 1px;
     }
 
     .field {
-        margin-bottom: 15px;
+        margin-bottom: 18px;
     }
 
     label {
         display: block;
         margin-bottom: 6px;
         font-size: 14px;
-        opacity: 0.9;
+        opacity: 0.85;
     }
 
     input, select {
@@ -49,61 +53,69 @@
         border: none;
         outline: none;
         font-size: 15px;
-        box-sizing: border-box;
     }
 
     button {
         width: 100%;
-        padding: 12px;
-        border-radius: 12px;
+        margin-top: 10px;
+        padding: 13px;
+        border-radius: 14px;
         border: none;
         font-size: 16px;
         font-weight: bold;
         cursor: pointer;
-        background: #00c6ff;
-        color: #003049;
-        margin-top: 10px;
+        background: linear-gradient(135deg, #00c6ff, #0072ff);
+        color: #fff;
     }
 
     button:hover {
-        background: #00b4eb;
+        opacity: 0.9;
     }
 
-    #result {
-        margin-top: 20px;
-        background: rgba(0, 0, 0, 0.35);
-        padding: 15px;
+    .results {
+        margin-top: 25px;
+        display: grid;
+        gap: 10px;
+    }
+
+    .box {
+        padding: 12px 14px;
         border-radius: 12px;
         font-size: 14px;
-        line-height: 1.6;
     }
 
+    .blue { background: rgba(0, 198, 255, 0.25); }
+    .green { background: rgba(0, 200, 83, 0.25); }
+    .orange { background: rgba(255, 171, 0, 0.25); }
+    .red { background: rgba(229, 57, 53, 0.25); }
+    .purple { background: rgba(156, 39, 176, 0.25); }
+
     .footer {
-        margin-top: 15px;
+        margin-top: 20px;
         text-align: center;
         font-size: 12px;
-        opacity: 0.7;
+        opacity: 0.75;
     }
 </style>
 </head>
 
 <body>
 
-<div class="card">
+<div class="container">
     <h1>Profit Calculator</h1>
 
     <div class="field">
         <label>Principal Amount (Rs)</label>
-        <input id="principal" type="text" placeholder="e.g. 1,000,000" oninput="formatNumber(this)">
+        <input id="principal" type="text" placeholder="1,000,000">
     </div>
 
     <div class="field">
         <label>Profit Rate (%)</label>
-        <input id="rate" type="number" placeholder="e.g. 12">
+        <input id="rate" type="number" placeholder="12">
     </div>
 
     <div class="field">
-        <label>WHT Tax Category</label>
+        <label>WHT Category</label>
         <select id="taxType">
             <option value="15">Filer (15%)</option>
             <option value="30">Non-Filer (30%)</option>
@@ -112,58 +124,55 @@
 
     <button type="button" onclick="calculate()">Calculate</button>
 
-    <div id="result"></div>
+    <div id="results" class="results"></div>
 
     <div class="footer">
-        Developed with ❤️ by <b>Qais Mubeen</b>
+        Crafted & Developed by <b>Qais Mubeen</b>
     </div>
 </div>
 
 <script>
-function formatNumber(input) {
-    let value = input.value.replace(/,/g, "");
-    if (isNaN(value)) return;
-    input.value = Number(value).toLocaleString();
-}
+const principalInput = document.getElementById("principal");
+
+principalInput.addEventListener("input", () => {
+    let raw = principalInput.value.replace(/,/g, "");
+    if (raw === "" || isNaN(raw)) return;
+    principalInput.value = Number(raw).toLocaleString();
+});
 
 function calculate() {
-
-    let pa = Number(document.getElementById("principal").value.replace(/,/g, ""));
-    let pr = Number(document.getElementById("rate").value);
-    let taxRate = Number(document.getElementById("taxType").value);
+    const pa = Number(principalInput.value.replace(/,/g, ""));
+    const pr = Number(document.getElementById("rate").value);
+    const taxRate = Number(document.getElementById("taxType").value);
 
     if (isNaN(pa) || pa < 0 || isNaN(pr) || pr < 0) {
-        document.getElementById("result").innerHTML =
-            "<b>Please enter valid values.</b>";
+        document.getElementById("results").innerHTML =
+            `<div class="box red">Please enter valid values.</div>`;
         return;
     }
 
-    // SAME LOGIC AS YOUR C++ CODE
-    let pv_year = pa * pr / 100;
-    let pv_month = pv_year / 12;
+    const pv_year = pa * pr / 100;
+    const pv_month = pv_year / 12;
+    const wht = pv_year * taxRate / 100;
+    const net_year = pv_year - wht;
+    const net_month = net_year / 12;
+    const total_month = pa + net_month;
+    const total_year = pa + net_year;
 
-    let wht_tax = pv_year * taxRate / 100;
+    document.getElementById("results").innerHTML = `
+        <div class="box blue"><b>Principal:</b> Rs ${pa.toLocaleString()}</div>
+        <div class="box blue"><b>Profit Rate:</b> ${pr}%</div>
 
-    let net_year = pv_year - wht_tax;
-    let net_month = net_year / 12;
+        <div class="box purple"><b>Profit / Year (No Tax):</b> Rs ${pv_year.toLocaleString()}</div>
+        <div class="box purple"><b>Profit / Month (No Tax):</b> Rs ${pv_month.toLocaleString()}</div>
 
-    let total_month = pa + net_month;
-    let total_year = pa + net_year;
+        <div class="box red"><b>WHT Tax (${taxRate}%):</b> Rs ${wht.toLocaleString()}</div>
 
-    document.getElementById("result").innerHTML = `
-        <b>Principal Amount:</b> Rs ${pa.toLocaleString()}<br>
-        <b>Profit Rate:</b> ${pr}%<br><br>
+        <div class="box green"><b>Net Profit / Year:</b> Rs ${net_year.toLocaleString()}</div>
+        <div class="box green"><b>Net Profit / Month:</b> Rs ${net_month.toLocaleString()}</div>
 
-        <b>Profit (Per Year – No Tax):</b> Rs ${pv_year.toLocaleString()}<br>
-        <b>Profit (Per Month – No Tax):</b> Rs ${pv_month.toLocaleString()}<br><br>
-
-        <b>WHT Tax (${taxRate}%):</b> Rs ${wht_tax.toLocaleString()}<br><br>
-
-        <b>Net Profit (Per Year):</b> Rs ${net_year.toLocaleString()}<br>
-        <b>Net Profit (Per Month):</b> Rs ${net_month.toLocaleString()}<br><br>
-
-        <b>Total After 1 Month:</b> Rs ${total_month.toLocaleString()}<br>
-        <b>Total After 1 Year:</b> Rs ${total_year.toLocaleString()}
+        <div class="box orange"><b>Total After 1 Month:</b> Rs ${total_month.toLocaleString()}</div>
+        <div class="box orange"><b>Total After 1 Year:</b> Rs ${total_year.toLocaleString()}</div>
     `;
 }
 </script>
