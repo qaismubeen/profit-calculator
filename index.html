@@ -60,8 +60,12 @@
         font-size: 16px;
         font-weight: bold;
         cursor: pointer;
-        background: linear-gradient(135deg, #00c6ff, #0072ff);
+        background: linear-gradient(135deg, #2e7d32, #43a047);
         color: #fff;
+    }
+
+    button:hover {
+        opacity: 0.9;
     }
 
     .results {
@@ -77,33 +81,22 @@
         font-weight: 500;
     }
 
+    /* HEADINGS WITHOUT COLOR */
     .heading {
+        background: none;
+        padding: 6px 0;
+        font-size: 16px;
         font-weight: bold;
-        text-transform: uppercase;
-        letter-spacing: 0.6px;
         text-align: center;
+        letter-spacing: 0.5px;
     }
 
-    /* STRONGER COLORS */
-    .blue {
-        background: #0288d1;
-    }
-
-    .purple {
-        background: #7b1fa2;
-    }
-
-    .red {
-        background: #c62828;
-    }
-
-    .green {
-        background: #2e7d32;
-    }
-
-    .orange {
-        background: #ef6c00;
-    }
+    /* STRONG COLORS */
+    .blue { background: #0288d1; }
+    .purple { background: #7b1fa2; }
+    .red { background: #c62828; }
+    .green { background: #2e7d32; }
+    .orange { background: #ef6c00; }
 
     .footer {
         margin-top: 18px;
@@ -177,11 +170,11 @@ function calculate() {
         <div class="box blue"><b>Principal Amount:</b> Rs ${pa.toLocaleString()}</div>
         <div class="box blue"><b>Profit Rate:</b> ${pr}%</div>
 
-        <div class="box heading purple">Without Withholding Tax</div>
+        <div class="heading">Without Withholding Tax</div>
         <div class="box purple"><b>Profit / Year:</b> Rs ${pv_year.toLocaleString()}</div>
         <div class="box purple"><b>Profit / Month:</b> Rs ${pv_month.toLocaleString()}</div>
 
-        <div class="box heading red">With Withholding Tax (${taxRate}%)</div>
+        <div class="heading">With Withholding Tax (${taxRate}%)</div>
         <div class="box red"><b>Tax Amount:</b> Rs ${wht.toLocaleString()}</div>
 
         <div class="box green"><b>Net Profit / Year:</b> Rs ${net_year.toLocaleString()}</div>
