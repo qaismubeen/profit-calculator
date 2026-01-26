@@ -1,32 +1,172 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Profit Calculator</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Profit Calculator</title>
+
+<style>
+    body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+        font-family: Arial, sans-serif;
+        color: white;
+    }
+
+    .card {
+        width: 420px;
+        background: rgba(255, 255, 255, 0.12);
+        padding: 25px;
+        border-radius: 18px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        backdrop-filter: blur(12px);
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 24px;
+    }
+
+    .field {
+        margin-bottom: 15px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 14px;
+        opacity: 0.9;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: none;
+        outline: none;
+        font-size: 15px;
+        box-sizing: border-box;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        border-radius: 12px;
+        border: none;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        background: #00c6ff;
+        color: #003049;
+        margin-top: 10px;
+    }
+
+    button:hover {
+        background: #00b4eb;
+    }
+
+    #result {
+        margin-top: 20px;
+        background: rgba(0, 0, 0, 0.35);
+        padding: 15px;
+        border-radius: 12px;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .footer {
+        margin-top: 15px;
+        text-align: center;
+        font-size: 12px;
+        opacity: 0.7;
+    }
+</style>
 </head>
+
 <body>
 
-<div class="box">
-    <h2>Profit Calculator</h2>
+<div class="card">
+    <h1>Profit Calculator</h1>
 
-    <div class="inputs">
-        <input type="text" id="principal" placeholder="Principal (Rs)">
-        <input type="text" id="rate" placeholder="Rate %">
+    <div class="field">
+        <label>Principal Amount (Rs)</label>
+        <input id="principal" type="text" placeholder="e.g. 1,000,000" oninput="formatNumber(this)">
+    </div>
+
+    <div class="field">
+        <label>Profit Rate (%)</label>
+        <input id="rate" type="number" placeholder="e.g. 12">
+    </div>
+
+    <div class="field">
+        <label>WHT Tax Category</label>
         <select id="taxType">
-            <option value="15">Filer 15%</option>
-            <option value="30">Non-Filer 30%</option>
+            <option value="15">Filer (15%)</option>
+            <option value="30">Non-Filer (30%)</option>
         </select>
     </div>
 
-    <br>
-
-    <button onclick="calculate()">Calculate</button>
+    <button type="button" onclick="calculate()">Calculate</button>
 
     <div id="result"></div>
 
-    <p class="credit">Developed by Qais Mubeen</p>
+    <div class="footer">
+        Developed with ❤️ by <b>Qais Mubeen</b>
+    </div>
 </div>
 
-<script src="script.js"></script>
+<script>
+function formatNumber(input) {
+    let value = input.value.replace(/,/g, "");
+    if (isNaN(value)) return;
+    input.value = Number(value).toLocaleString();
+}
+
+function calculate() {
+
+    let pa = Number(document.getElementById("principal").value.replace(/,/g, ""));
+    let pr = Number(document.getElementById("rate").value);
+    let taxRate = Number(document.getElementById("taxType").value);
+
+    if (isNaN(pa) || pa < 0 || isNaN(pr) || pr < 0) {
+        document.getElementById("result").innerHTML =
+            "<b>Please enter valid values.</b>";
+        return;
+    }
+
+    // SAME LOGIC AS YOUR C++ CODE
+    let pv_year = pa * pr / 100;
+    let pv_month = pv_year / 12;
+
+    let wht_tax = pv_year * taxRate / 100;
+
+    let net_year = pv_year - wht_tax;
+    let net_month = net_year / 12;
+
+    let total_month = pa + net_month;
+    let total_year = pa + net_year;
+
+    document.getElementById("result").innerHTML = `
+        <b>Principal Amount:</b> Rs ${pa.toLocaleString()}<br>
+        <b>Profit Rate:</b> ${pr}%<br><br>
+
+        <b>Profit (Per Year – No Tax):</b> Rs ${pv_year.toLocaleString()}<br>
+        <b>Profit (Per Month – No Tax):</b> Rs ${pv_month.toLocaleString()}<br><br>
+
+        <b>WHT Tax (${taxRate}%):</b> Rs ${wht_tax.toLocaleString()}<br><br>
+
+        <b>Net Profit (Per Year):</b> Rs ${net_year.toLocaleString()}<br>
+        <b>Net Profit (Per Month):</b> Rs ${net_month.toLocaleString()}<br><br>
+
+        <b>Total After 1 Month:</b> Rs ${total_month.toLocaleString()}<br>
+        <b>Total After 1 Year:</b> Rs ${total_year.toLocaleString()}
+    `;
+}
+</script>
+
 </body>
 </html>
