@@ -10,24 +10,34 @@
 
 <div class="app">
     <h1>Profit Calculator</h1>
-    <p class="tagline">Accurate Profit Estimation with WHT Deduction</p>
+    <p class="tagline">Accurate Profit Calculation with WHT Deduction</p>
 
     <div class="inputs">
-        <input type="text" id="principal" placeholder="Principal Amount (Rs)">
-        <input type="text" id="rate" placeholder="Profit Rate (%)">
+        <div class="field">
+            <label>Principal Amount (Rs)</label>
+            <input type="text" id="principal" placeholder="e.g. 1,000,000">
+        </div>
 
-        <select id="taxType">
-            <option value="15">Filer (15% WHT)</option>
-            <option value="30">Non-Filer (30% WHT)</option>
-        </select>
+        <div class="field">
+            <label>Profit Rate (%)</label>
+            <input type="text" id="rate" placeholder="e.g. 12">
+        </div>
 
-        <button onclick="calculate()">Calculate</button>
+        <div class="field">
+            <label>Tax Category</label>
+            <select id="taxType">
+                <option value="15">Filer (15%)</option>
+                <option value="30">Non-Filer (30%)</option>
+            </select>
+        </div>
     </div>
 
-    <div class="results" id="results"></div>
+    <button onclick="calculateProfit()">Calculate</button>
+
+    <div id="result" class="results"></div>
 
     <footer>
-        Developed & Designed by <strong>Qais Mubeen</strong>
+        Developed with precision by <strong>Qais Mubeen</strong>
     </footer>
 </div>
 
