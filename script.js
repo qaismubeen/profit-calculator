@@ -1,43 +1,50 @@
 function calculateProfit() {
     let pa = parseFloat(document.getElementById("principal").value);
     let pr = parseFloat(document.getElementById("rate").value);
+    let taxRate = parseFloat(document.getElementById("taxType").value);
 
-    // Input validation (same as cin.fail() and pa < 0)
     if (isNaN(pa) || pa < 0) {
-        alert("Invalid Principal Amount");
+        alert("Please enter a valid Principal Amount");
         return;
     }
 
     if (isNaN(pr) || pr < 0) {
-        alert("Invalid Profit Rate");
+        alert("Please enter a valid Profit Rate");
         return;
     }
 
-    // Without WHT Tax
-    let pv_year = pa * pr / 100;
-    let pv_month = pv_year / 12;
+    // Without Tax
+    let profitYear = pa * pr / 100;
+    let profitMonth = profitYear / 12;
 
-    // WHT Tax (15%)
-    let wht_tax = pv_year * 15 / 100;
+    // WHT Tax
+    let whtTax = profitYear * taxRate / 100;
 
-    // Net Profit after tax
-    let net_year = pv_year - wht_tax;
-    let net_month = net_year / 12;
+    // Net Profit
+    let netYear = profitYear - whtTax;
+    let netMonth = netYear / 12;
 
-    let total_after_month = pa + net_month;
-    let total_after_year = pa + net_year;
+    let totalMonth = pa + netMonth;
+    let totalYear = pa + netYear;
 
     document.getElementById("result").innerHTML = `
-        <h3>Results</h3>
-        <p>Principal Amount: Rs. ${pa}</p>
-        <p>Profit Rate: ${pr}%</p>
-        <p><strong>Without WHT Tax</strong></p>
-        <p>Profit per Year: Rs. ${pv_year.toFixed(2)}</p>
-        <p>Profit per Month: Rs. ${pv_month.toFixed(2)}</p>
-        <p><strong>WHT Tax (15%)</strong>: Rs. ${wht_tax.toFixed(2)}</p>
-        <p><strong>Net Profit per Year</strong>: Rs. ${net_year.toFixed(2)}</p>
-        <p><strong>Net Profit per Month</strong>: Rs. ${net_month.toFixed(2)}</p>
-        <p>Total Amount after 1 Month: Rs. ${total_after_month.toFixed(2)}</p>
-        <p>Total Amount after 1 Year: Rs. ${total_after_year.toFixed(2)}</p>
+        <h2>📊 Calculation Results</h2>
+
+        <div class="result-grid">
+            <div><span>Principal Amount</span><strong>Rs. ${pa.toFixed(2)}</strong></div>
+            <div><span>Profit Rate</span><strong>${pr}%</strong></div>
+            <div><span>WHT Category</span><strong>${taxRate}%</strong></div>
+
+            <div><span>Profit / Year (No Tax)</span><strong>Rs. ${profitYear.toFixed(2)}</strong></div>
+            <div><span>Profit / Month (No Tax)</span><strong>Rs. ${profitMonth.toFixed(2)}</strong></div>
+
+            <div><span>WHT Tax Deduction</span><strong>Rs. ${whtTax.toFixed(2)}</strong></div>
+
+            <div><span>Net Profit / Year</span><strong>Rs. ${netYear.toFixed(2)}</strong></div>
+            <div><span>Net Profit / Month</span><strong>Rs. ${netMonth.toFixed(2)}</strong></div>
+
+            <div><span>Total After 1 Month</span><strong>Rs. ${totalMonth.toFixed(2)}</strong></div>
+            <div><span>Total After 1 Year</span><strong>Rs. ${totalYear.toFixed(2)}</strong></div>
+        </div>
     `;
 }
