@@ -12,31 +12,27 @@
         justify-content: center;
         align-items: center;
         font-family: "Segoe UI", sans-serif;
-        background:
-            radial-gradient(circle at top left, #1d2671, transparent 45%),
-            radial-gradient(circle at bottom right, #243b55, transparent 45%),
-            linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
         color: #fff;
     }
 
     .container {
         width: 480px;
         background: rgba(255,255,255,0.12);
-        border-radius: 24px;
+        border-radius: 22px;
         padding: 30px;
-        box-shadow: 0 35px 70px rgba(0,0,0,0.45);
-        backdrop-filter: blur(15px);
+        box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+        backdrop-filter: blur(14px);
     }
 
     h1 {
         text-align: center;
-        margin-bottom: 25px;
+        margin-bottom: 22px;
         font-size: 26px;
-        letter-spacing: 1px;
     }
 
     .field {
-        margin-bottom: 18px;
+        margin-bottom: 16px;
     }
 
     label {
@@ -59,7 +55,7 @@
         width: 100%;
         margin-top: 12px;
         padding: 14px;
-        border-radius: 16px;
+        border-radius: 14px;
         border: none;
         font-size: 16px;
         font-weight: bold;
@@ -68,41 +64,35 @@
         color: #fff;
     }
 
-    button:hover {
+    .results {
+        margin-top: 22px;
+        display: grid;
+        gap: 10px;
+    }
+
+    .box {
+        padding: 12px 14px;
+        border-radius: 12px;
+        font-size: 14px;
+    }
+
+    .heading {
+        font-weight: bold;
+        letter-spacing: 0.5px;
         opacity: 0.9;
     }
 
-    .section {
-        margin-top: 22px;
-        padding: 14px;
-        border-radius: 16px;
-    }
-
-    .gross { background: rgba(0, 176, 255, 0.25); }
-    .tax { background: rgba(229, 57, 53, 0.25); }
-    .net { background: rgba(0, 200, 83, 0.25); }
-    .final {
-        background: linear-gradient(135deg, #4facfe, #00f2fe);
-        color: #003049;
-        font-weight: bold;
-    }
-
-    .section h3 {
-        margin: 0 0 10px 0;
-        font-size: 15px;
-        letter-spacing: 0.5px;
-    }
-
-    .line {
-        font-size: 14px;
-        margin-bottom: 6px;
-    }
+    .blue { background: rgba(0, 176, 255, 0.25); }
+    .purple { background: rgba(156, 39, 176, 0.25); }
+    .red { background: rgba(229, 57, 53, 0.25); }
+    .green { background: rgba(0, 200, 83, 0.25); }
+    .orange { background: rgba(255, 152, 0, 0.25); }
 
     .footer {
-        margin-top: 20px;
+        margin-top: 18px;
         text-align: center;
         font-size: 12px;
-        opacity: 0.75;
+        opacity: 0.7;
     }
 </style>
 </head>
@@ -132,10 +122,10 @@
 
     <button type="button" onclick="calculate()">Calculate</button>
 
-    <div id="results"></div>
+    <div id="results" class="results"></div>
 
     <div class="footer">
-        Designed & Developed by <b>Qais Mubeen</b>
+        Developed by <b>Qais Mubeen</b>
     </div>
 </div>
 
@@ -167,28 +157,21 @@ function calculate() {
     const total_year = pa + net_year;
 
     document.getElementById("results").innerHTML = `
-        <div class="section gross">
-            <h3>Without Withholding Tax</h3>
-            <div class="line">Profit / Year: Rs ${pv_year.toLocaleString()}</div>
-            <div class="line">Profit / Month: Rs ${pv_month.toLocaleString()}</div>
-        </div>
+        <div class="box blue"><b>Principal Amount:</b> Rs ${pa.toLocaleString()}</div>
+        <div class="box blue"><b>Profit Rate:</b> ${pr}%</div>
 
-        <div class="section tax">
-            <h3>With Withholding Tax (${taxRate}%)</h3>
-            <div class="line">Tax Amount: Rs ${wht.toLocaleString()}</div>
-        </div>
+        <div class="box heading purple">Without Withholding Tax</div>
+        <div class="box purple"><b>Profit / Year:</b> Rs ${pv_year.toLocaleString()}</div>
+        <div class="box purple"><b>Profit / Month:</b> Rs ${pv_month.toLocaleString()}</div>
 
-        <div class="section net">
-            <h3>Net Profit After Withholding Tax</h3>
-            <div class="line">Net / Year: Rs ${net_year.toLocaleString()}</div>
-            <div class="line">Net / Month: Rs ${net_month.toLocaleString()}</div>
-        </div>
+        <div class="box heading red">With Withholding Tax (${taxRate}%)</div>
+        <div class="box red"><b>Tax Amount:</b> Rs ${wht.toLocaleString()}</div>
 
-        <div class="section final">
-            <h3>Final Total Amount</h3>
-            <div class="line">After 1 Month: Rs ${total_month.toLocaleString()}</div>
-            <div class="line">After 1 Year: Rs ${total_year.toLocaleString()}</div>
-        </div>
+        <div class="box green"><b>Net Profit / Year:</b> Rs ${net_year.toLocaleString()}</div>
+        <div class="box green"><b>Net Profit / Month:</b> Rs ${net_month.toLocaleString()}</div>
+
+        <div class="box orange"><b>Total After 1 Month:</b> Rs ${total_month.toLocaleString()}</div>
+        <div class="box orange"><b>Total After 1 Year:</b> Rs ${total_year.toLocaleString()}</div>
     `;
 }
 </script>
