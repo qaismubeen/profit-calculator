@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Advanced Profit Calculator</title>
+<title>Profit Calculator</title>
 
 <style>
     body {
@@ -13,19 +13,19 @@
         align-items: center;
         font-family: "Segoe UI", sans-serif;
         background:
-            radial-gradient(circle at top left, #1a2a6c, transparent 40%),
-            radial-gradient(circle at bottom right, #fdbb2d, transparent 40%),
-            linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            radial-gradient(circle at top left, #1d2671, transparent 40%),
+            radial-gradient(circle at bottom right, #c33764, transparent 40%),
+            linear-gradient(135deg, #141e30, #243b55);
         color: #fff;
     }
 
     .container {
-        width: 460px;
-        background: rgba(255, 255, 255, 0.12);
-        border-radius: 22px;
+        width: 480px;
+        background: rgba(255,255,255,0.12);
+        border-radius: 24px;
         padding: 30px;
-        box-shadow: 0 30px 60px rgba(0,0,0,0.45);
-        backdrop-filter: blur(14px);
+        box-shadow: 0 35px 70px rgba(0,0,0,0.45);
+        backdrop-filter: blur(15px);
     }
 
     h1 {
@@ -57,9 +57,9 @@
 
     button {
         width: 100%;
-        margin-top: 10px;
-        padding: 13px;
-        border-radius: 14px;
+        margin-top: 12px;
+        padding: 14px;
+        border-radius: 16px;
         border: none;
         font-size: 16px;
         font-weight: bold;
@@ -72,23 +72,31 @@
         opacity: 0.9;
     }
 
-    .results {
-        margin-top: 25px;
-        display: grid;
-        gap: 10px;
+    .section {
+        margin-top: 22px;
+        padding: 14px;
+        border-radius: 16px;
     }
 
-    .box {
-        padding: 12px 14px;
-        border-radius: 12px;
+    .gross { background: rgba(0, 176, 255, 0.25); }
+    .tax { background: rgba(229, 57, 53, 0.25); }
+    .net { background: rgba(0, 200, 83, 0.25); }
+    .final {
+        background: linear-gradient(135deg, #ff9800, #ffc107);
+        color: #222;
+        font-weight: bold;
+    }
+
+    .section h3 {
+        margin: 0 0 10px 0;
+        font-size: 15px;
+        letter-spacing: 0.5px;
+    }
+
+    .line {
         font-size: 14px;
+        margin-bottom: 6px;
     }
-
-    .blue { background: rgba(0, 198, 255, 0.25); }
-    .green { background: rgba(0, 200, 83, 0.25); }
-    .orange { background: rgba(255, 171, 0, 0.25); }
-    .red { background: rgba(229, 57, 53, 0.25); }
-    .purple { background: rgba(156, 39, 176, 0.25); }
 
     .footer {
         margin-top: 20px;
@@ -124,10 +132,10 @@
 
     <button type="button" onclick="calculate()">Calculate</button>
 
-    <div id="results" class="results"></div>
+    <div id="results"></div>
 
     <div class="footer">
-        Crafted & Developed by <b>Qais Mubeen</b>
+        Designed & Developed by <b>Qais Mubeen</b>
     </div>
 </div>
 
@@ -146,8 +154,7 @@ function calculate() {
     const taxRate = Number(document.getElementById("taxType").value);
 
     if (isNaN(pa) || pa < 0 || isNaN(pr) || pr < 0) {
-        document.getElementById("results").innerHTML =
-            `<div class="box red">Please enter valid values.</div>`;
+        document.getElementById("results").innerHTML = "";
         return;
     }
 
@@ -160,19 +167,28 @@ function calculate() {
     const total_year = pa + net_year;
 
     document.getElementById("results").innerHTML = `
-        <div class="box blue"><b>Principal:</b> Rs ${pa.toLocaleString()}</div>
-        <div class="box blue"><b>Profit Rate:</b> ${pr}%</div>
+        <div class="section gross">
+            <h3>Without WHT Tax</h3>
+            <div class="line">Profit / Year: Rs ${pv_year.toLocaleString()}</div>
+            <div class="line">Profit / Month: Rs ${pv_month.toLocaleString()}</div>
+        </div>
 
-        <div class="box purple"><b>Profit / Year (No Tax):</b> Rs ${pv_year.toLocaleString()}</div>
-        <div class="box purple"><b>Profit / Month (No Tax):</b> Rs ${pv_month.toLocaleString()}</div>
+        <div class="section tax">
+            <h3>WHT Deduction (${taxRate}%)</h3>
+            <div class="line">Tax Amount: Rs ${wht.toLocaleString()}</div>
+        </div>
 
-        <div class="box red"><b>WHT Tax (${taxRate}%):</b> Rs ${wht.toLocaleString()}</div>
+        <div class="section net">
+            <h3>Net Profit After Tax</h3>
+            <div class="line">Net / Year: Rs ${net_year.toLocaleString()}</div>
+            <div class="line">Net / Month: Rs ${net_month.toLocaleString()}</div>
+        </div>
 
-        <div class="box green"><b>Net Profit / Year:</b> Rs ${net_year.toLocaleString()}</div>
-        <div class="box green"><b>Net Profit / Month:</b> Rs ${net_month.toLocaleString()}</div>
-
-        <div class="box orange"><b>Total After 1 Month:</b> Rs ${total_month.toLocaleString()}</div>
-        <div class="box orange"><b>Total After 1 Year:</b> Rs ${total_year.toLocaleString()}</div>
+        <div class="section final">
+            <h3>Final Total Amount</h3>
+            <div class="line">After 1 Month: Rs ${total_month.toLocaleString()}</div>
+            <div class="line">After 1 Year: Rs ${total_year.toLocaleString()}</div>
+        </div>
     `;
 }
 </script>
