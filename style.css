@@ -1,111 +1,43 @@
-* {
-    box-sizing: border-box;
-}
-
 body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: radial-gradient(circle at top, #1e3c72, #2a5298);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #fff;
+    background: #0f172a;
+    color: white;
+    font-family: Arial, sans-serif;
 }
 
-.app {
-    background: rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(14px);
-    padding: 24px;
-    width: 420px;
-    border-radius: 18px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.35);
-}
-
-h1 {
+/* CENTER EVERYTHING */
+.box {
+    width: 500px;
+    margin: 100px auto;
     text-align: center;
-    margin: 0;
+    background: #111827;
+    padding: 25px;
+    border-radius: 10px;
 }
 
-.tagline {
-    text-align: center;
-    font-size: 13px;
-    opacity: 0.8;
-    margin-bottom: 20px;
+/* INPUTS DO NOT STRETCH */
+.inputs input,
+.inputs select {
+    width: 140px;          /* 🔥 SMALL BOXES */
+    padding: 6px;
+    margin: 5px;
+    display: inline-block; /* 🔥 PREVENT STRETCH */
 }
 
-.inputs {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-}
-
-.field {
-    width: 32%;
-}
-
-label {
-    font-size: 12px;
-    opacity: 0.85;
-}
-
-input, select {
-    width: 100%;
-    padding: 8px;
-    margin-top: 6px;
-    border-radius: 8px;
-    border: none;
-    font-size: 14px;
-    outline: none;
-}
-
+/* BUTTON SEPARATE */
 button {
-    margin-top: 18px;
-    width: 100%;
-    padding: 11px;
-    font-size: 15px;
-    font-weight: 600;
-    background: linear-gradient(135deg, #00f2fe, #4facfe);
-    border: none;
-    border-radius: 10px;
+    padding: 8px 20px;
+    margin-top: 15px;
     cursor: pointer;
-    color: #000;
 }
 
-button:hover {
-    opacity: 0.9;
+/* RESULT */
+#result {
+    margin-top: 20px;
 }
 
-.results {
-    margin-top: 18px;
-}
-
-.grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-}
-
-.grid div {
-    background: rgba(0,0,0,0.28);
-    padding: 10px;
-    border-radius: 10px;
-}
-
-.grid span {
-    font-size: 11px;
-    opacity: 0.75;
-}
-
-.grid strong {
-    display: block;
-    margin-top: 4px;
-    font-size: 14px;
-}
-
-footer {
-    margin-top: 16px;
-    text-align: center;
-    font-size: 11px;
+/* CREDIT */
+.credit {
+    margin-top: 20px;
+    font-size: 12px;
     opacity: 0.7;
 }
