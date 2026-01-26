@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <title>Profit Calculator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- VERY IMPORTANT -->
 
 <style>
-    /* BODY & BACKGROUND */
     body {
         margin: 0;
         min-height: 100vh;
@@ -18,10 +18,9 @@
         padding: 10px;
     }
 
-    /* CONTAINER */
     .container {
         width: 100%;
-        max-width: 500px;  /* desktop max */
+        max-width: 500px;
         background: rgba(255,255,255,0.12);
         border-radius: 22px;
         padding: 30px;
@@ -36,7 +35,6 @@
         font-size: 26px;
     }
 
-    /* INPUT FIELDS */
     .field {
         margin-bottom: 16px;
     }
@@ -109,37 +107,38 @@
         opacity: 0.75;
     }
 
-    /* ------------------ MOBILE RESPONSIVE ------------------ */
+    /* ----------- MOBILE RESPONSIVE ----------- */
     @media (max-width: 600px) {
         .container {
-            width: 95%; /* almost full width on mobile */
-            padding: 20px;
+            width: 95%;
+            padding: 25px;
         }
         h1 {
-            font-size: 22px;
+            font-size: 24px;
+        }
+        label {
+            font-size: 16px;
         }
         input, select {
-            font-size: 16px;
+            font-size: 18px;
             padding: 14px 12px;
         }
         button {
-            font-size: 16px;
-            padding: 14px;
+            font-size: 18px;
+            padding: 16px;
         }
         .box {
-            font-size: 15px;
-            padding: 12px 14px;
+            font-size: 16px;
+            padding: 14px 16px;
         }
         .heading {
-            font-size: 18px;
+            font-size: 20px;
         }
     }
-
 </style>
 </head>
 
 <body>
-
 <div class="container">
     <h1>Profit Calculator</h1>
 
