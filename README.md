@@ -13,6 +13,7 @@ This project calculates profit based on:
 
 ### Live Demo
 https://qaismubeen.github.io/profit-calculator/
-### Develloped by
+### Developed by
 QAIS MUBEEN
+
 
