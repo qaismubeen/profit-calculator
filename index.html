@@ -1,44 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
     <title>Profit Calculator</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="app">
-    <h1>Profit Calculator</h1>
-    <p class="tagline">Accurate Profit Calculation with WHT Deduction</p>
+<div class="box">
+    <h2>Profit Calculator</h2>
 
     <div class="inputs">
-        <div class="field">
-            <label>Principal Amount (Rs)</label>
-            <input type="text" id="principal" placeholder="e.g. 1,000,000">
-        </div>
-
-        <div class="field">
-            <label>Profit Rate (%)</label>
-            <input type="text" id="rate" placeholder="e.g. 12">
-        </div>
-
-        <div class="field">
-            <label>Tax Category</label>
-            <select id="taxType">
-                <option value="15">Filer (15%)</option>
-                <option value="30">Non-Filer (30%)</option>
-            </select>
-        </div>
+        <input type="text" id="principal" placeholder="Principal (Rs)">
+        <input type="text" id="rate" placeholder="Rate %">
+        <select id="taxType">
+            <option value="15">Filer 15%</option>
+            <option value="30">Non-Filer 30%</option>
+        </select>
     </div>
 
-    <button onclick="calculateProfit()">Calculate</button>
+    <br>
 
-    <div id="result" class="results"></div>
+    <button onclick="calculate()">Calculate</button>
 
-    <footer>
-        Developed with precision by <strong>Qais Mubeen</strong>
-    </footer>
+    <div id="result"></div>
+
+    <p class="credit">Developed by Qais Mubeen</p>
 </div>
 
 <script src="script.js"></script>
