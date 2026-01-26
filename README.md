@@ -3,7 +3,8 @@
 This project calculates profit based on:
 - Principal Amount
 - Profit Rate
-- 15% WHT Tax deduction
+- 15% WHT Tax deductions (For Filer)
+30% WHT deductions (For Non-Filer)
 
 ### Technologies
 - C++ (original logic)
@@ -11,4 +12,5 @@ This project calculates profit based on:
 - GitHub Pages
 
 ### Live Demo
-https://yourusername.github.io/profit-calculator/
+https://qaismubeen.github.io/profit-calculator/
+
