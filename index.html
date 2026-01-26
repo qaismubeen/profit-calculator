@@ -13,9 +13,9 @@
         align-items: center;
         font-family: "Segoe UI", sans-serif;
         background:
-            radial-gradient(circle at top left, #1d2671, transparent 40%),
-            radial-gradient(circle at bottom right, #c33764, transparent 40%),
-            linear-gradient(135deg, #141e30, #243b55);
+            radial-gradient(circle at top left, #1d2671, transparent 45%),
+            radial-gradient(circle at bottom right, #243b55, transparent 45%),
+            linear-gradient(135deg, #0f2027, #203a43, #2c5364);
         color: #fff;
     }
 
@@ -82,8 +82,8 @@
     .tax { background: rgba(229, 57, 53, 0.25); }
     .net { background: rgba(0, 200, 83, 0.25); }
     .final {
-        background: linear-gradient(135deg, #ff9800, #ffc107);
-        color: #222;
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        color: #003049;
         font-weight: bold;
     }
 
@@ -168,18 +168,18 @@ function calculate() {
 
     document.getElementById("results").innerHTML = `
         <div class="section gross">
-            <h3>Without WHT Tax</h3>
+            <h3>Without Withholding Tax</h3>
             <div class="line">Profit / Year: Rs ${pv_year.toLocaleString()}</div>
             <div class="line">Profit / Month: Rs ${pv_month.toLocaleString()}</div>
         </div>
 
         <div class="section tax">
-            <h3>WHT Deduction (${taxRate}%)</h3>
+            <h3>With Withholding Tax (${taxRate}%)</h3>
             <div class="line">Tax Amount: Rs ${wht.toLocaleString()}</div>
         </div>
 
         <div class="section net">
-            <h3>Net Profit After Tax</h3>
+            <h3>Net Profit After Withholding Tax</h3>
             <div class="line">Net / Year: Rs ${net_year.toLocaleString()}</div>
             <div class="line">Net / Month: Rs ${net_month.toLocaleString()}</div>
         </div>
