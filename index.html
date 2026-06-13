@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Profit Calculator</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- VERY IMPORTANT -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
     body {
@@ -53,6 +53,7 @@
         border: none;
         outline: none;
         font-size: 15px;
+        box-sizing: border-box;
     }
 
     button {
@@ -94,10 +95,10 @@
         letter-spacing: 0.5px;
     }
 
-    .blue { background: #0288d1; }
+    .blue   { background: #0288d1; }
     .purple { background: #7b1fa2; }
-    .red { background: #c62828; }
-    .green { background: #2e7d32; }
+    .red    { background: #c62828; }
+    .green  { background: #2e7d32; }
     .orange { background: #ef6c00; }
 
     .footer {
@@ -107,33 +108,17 @@
         opacity: 0.75;
     }
 
-    /* ----------- MOBILE RESPONSIVE ----------- */
     @media (max-width: 600px) {
         .container {
             width: 95%;
             padding: 25px;
         }
-        h1 {
-            font-size: 24px;
-        }
-        label {
-            font-size: 16px;
-        }
-        input, select {
-            font-size: 18px;
-            padding: 14px 12px;
-        }
-        button {
-            font-size: 18px;
-            padding: 16px;
-        }
-        .box {
-            font-size: 16px;
-            padding: 14px 16px;
-        }
-        .heading {
-            font-size: 20px;
-        }
+        h1    { font-size: 24px; }
+        label { font-size: 16px; }
+        input, select { font-size: 18px; padding: 14px 12px; }
+        button { font-size: 18px; padding: 16px; }
+        .box   { font-size: 16px; padding: 14px 16px; }
+        .heading { font-size: 20px; }
     }
 </style>
 </head>
@@ -149,7 +134,7 @@
 
     <div class="field">
         <label>Profit Rate (%)</label>
-        <input id="rate" type="number" placeholder="12">
+        <input id="rate" type="number" step="any" placeholder="11.4">
     </div>
 
     <div class="field">
@@ -179,8 +164,8 @@ principalInput.addEventListener("input", () => {
 });
 
 function calculate() {
-    const pa = Number(principalInput.value.replace(/,/g, ""));
-    const pr = Number(document.getElementById("rate").value);
+    const pa      = Number(principalInput.value.replace(/,/g, ""));
+    const pr      = Number(document.getElementById("rate").value);
     const taxRate = Number(document.getElementById("taxType").value);
 
     if (isNaN(pa) || pa < 0 || isNaN(pr) || pr < 0) {
@@ -188,30 +173,30 @@ function calculate() {
         return;
     }
 
-    const pv_year = pa * pr / 100;
-    const pv_month = pv_year / 12;
-    const wht = pv_year * taxRate / 100;
-    const net_year = pv_year - wht;
-    const net_month = net_year / 12;
+    const pv_year     = pa * pr / 100;
+    const pv_month    = pv_year / 12;
+    const wht         = pv_year * taxRate / 100;
+    const net_year    = pv_year - wht;
+    const net_month   = net_year / 12;
     const total_month = pa + net_month;
-    const total_year = pa + net_year;
+    const total_year  = pa + net_year;
 
     document.getElementById("results").innerHTML = `
         <div class="box blue"><b>Principal Amount:</b> Rs ${pa.toLocaleString()}</div>
         <div class="box blue"><b>Profit Rate:</b> ${pr}%</div>
 
         <div class="heading">Without Withholding Tax</div>
-        <div class="box purple"><b>Profit / Year:</b> Rs ${pv_year.toLocaleString()}</div>
-        <div class="box purple"><b>Profit / Month:</b> Rs ${pv_month.toLocaleString()}</div>
+        <div class="box purple"><b>Profit / Year:</b> Rs ${pv_year.toFixed(2)}</div>
+        <div class="box purple"><b>Profit / Month:</b> Rs ${pv_month.toFixed(2)}</div>
 
         <div class="heading">With Withholding Tax (${taxRate}%)</div>
-        <div class="box red"><b>Tax Amount:</b> Rs ${wht.toLocaleString()}</div>
+        <div class="box red"><b>Tax Amount:</b> Rs ${wht.toFixed(2)}</div>
 
-        <div class="box green"><b>Net Profit / Year:</b> Rs ${net_year.toLocaleString()}</div>
-        <div class="box green"><b>Net Profit / Month:</b> Rs ${net_month.toLocaleString()}</div>
+        <div class="box green"><b>Net Profit / Year:</b> Rs ${net_year.toFixed(2)}</div>
+        <div class="box green"><b>Net Profit / Month:</b> Rs ${net_month.toFixed(2)}</div>
 
-        <div class="box orange"><b>Total After 1 Month:</b> Rs ${total_month.toLocaleString()}</div>
-        <div class="box orange"><b>Total After 1 Year:</b> Rs ${total_year.toLocaleString()}</div>
+        <div class="box orange"><b>Total After 1 Month:</b> Rs ${total_month.toFixed(2)}</div>
+        <div class="box orange"><b>Total After 1 Year:</b> Rs ${total_year.toFixed(2)}</div>
     `;
 }
 </script>
