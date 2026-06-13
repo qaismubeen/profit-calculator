@@ -4,6 +4,10 @@ A clean, mobile-responsive web-based profit calculator built for Pakistani bank 
 
 Built as part of my hands-on development work alongside IT Operations and infrastructure experience in the Pakistan Air Force.
 
+## Live Demo
+
+[https://qaismubeen.github.io/profit-calculator/](https://qaismubeen.github.io/profit-calculator/)
+
 ## Features
 
 - Supports decimal profit rates (e.g. 11.4%, 12.75%)
@@ -22,7 +26,7 @@ Built as part of my hands-on development work alongside IT Operations and infras
 
 ## Usage
 
-No installation required. Open `index.html` in any browser.
+No installation required. Open `index.html` in any browser or visit the live demo above.
 
 ## Calculations
 
