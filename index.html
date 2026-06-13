@@ -4,40 +4,42 @@
 <meta charset="UTF-8">
 <title>Profit Calculator</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
+    * { box-sizing: border-box; }
+
     body {
         margin: 0;
         min-height: 100vh;
         display: flex;
         justify-content: center;
-        align-items: center;
+        align-items: flex-start;
         font-family: "Segoe UI", sans-serif;
         background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
         color: #fff;
-        padding: 10px;
+        padding: 20px 10px 40px;
     }
 
     .container {
         width: 100%;
-        max-width: 500px;
-        background: rgba(255,255,255,0.12);
+        max-width: 620px;
+        background: rgba(255,255,255,0.10);
         border-radius: 22px;
         padding: 30px;
         box-shadow: 0 30px 60px rgba(0,0,0,0.5);
         backdrop-filter: blur(14px);
-        box-sizing: border-box;
     }
 
     h1 {
         text-align: center;
-        margin-bottom: 22px;
+        margin-bottom: 24px;
         font-size: 26px;
+        letter-spacing: 0.5px;
     }
 
-    .field {
-        margin-bottom: 16px;
-    }
+    .field { margin-bottom: 16px; }
 
     label {
         display: block;
@@ -53,31 +55,49 @@
         border: none;
         outline: none;
         font-size: 15px;
-        box-sizing: border-box;
+        background: rgba(255,255,255,0.92);
+        color: #1a1a2e;
+    }
+
+    .checkbox-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 16px;
+        font-size: 14px;
+        opacity: 0.9;
+    }
+
+    .checkbox-row input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: #43a047;
     }
 
     button {
         width: 100%;
-        margin-top: 12px;
+        margin-top: 10px;
         padding: 14px;
         border-radius: 14px;
         border: none;
         font-size: 16px;
         font-weight: bold;
         cursor: pointer;
-        background: linear-gradient(135deg, #2e7d32, #43a047);
         color: #fff;
+        transition: opacity 0.2s;
     }
 
-    button:hover {
-        opacity: 0.9;
-    }
+    button:hover { opacity: 0.88; }
 
-    .results {
-        margin-top: 22px;
-        display: grid;
-        gap: 12px;
-    }
+    .btn-calc    { background: linear-gradient(135deg, #2e7d32, #43a047); }
+    .btn-compare { background: linear-gradient(135deg, #1565c0, #1e88e5); margin-top: 10px; }
+    .btn-chart   { background: linear-gradient(135deg, #6a1b9a, #ab47bc); margin-top: 10px; }
+    .btn-pdf     { background: linear-gradient(135deg, #b71c1c, #e53935); margin-top: 10px; }
+    .btn-bep     { background: linear-gradient(135deg, #e65100, #fb8c00); margin-top: 10px; }
+    .btn-reset   { background: rgba(255,255,255,0.15); margin-top: 10px; font-size: 14px; padding: 10px; }
+
+    .results { margin-top: 22px; display: grid; gap: 12px; }
 
     .box {
         padding: 14px 16px;
@@ -100,106 +120,779 @@
     .red    { background: #c62828; }
     .green  { background: #2e7d32; }
     .orange { background: #ef6c00; }
+    .teal   { background: #00695c; }
 
     .footer {
-        margin-top: 18px;
+        margin-top: 22px;
         text-align: center;
         font-size: 12px;
         opacity: 0.75;
     }
 
+    /* Compare section */
+    #compareSection {
+        margin-top: 28px;
+        border-top: 1px solid rgba(255,255,255,0.2);
+        padding-top: 24px;
+        display: none;
+    }
+
+    #compareSection h2 {
+        text-align: center;
+        font-size: 18px;
+        margin-bottom: 18px;
+        opacity: 0.9;
+    }
+
+    /* Comparison Table */
+    .comp-table-wrap { overflow-x: auto; margin-top: 16px; }
+
+    .comp-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+
+    .comp-table th {
+        background: rgba(255,255,255,0.18);
+        padding: 10px 12px;
+        text-align: left;
+        font-weight: 600;
+        border-bottom: 2px solid rgba(255,255,255,0.25);
+    }
+
+    .comp-table td {
+        padding: 9px 12px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .comp-table tr:nth-child(even) td {
+        background: rgba(255,255,255,0.05);
+    }
+
+    .comp-table .diff-better { color: #69f0ae; font-weight: bold; }
+    .comp-table .diff-worse  { color: #ff5252; font-weight: bold; }
+
+    /* Chart */
+    #chartSection {
+        margin-top: 22px;
+        display: none;
+    }
+
+    .chart-controls {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+    }
+
+    .chart-controls select {
+        width: auto;
+        font-size: 13px;
+        padding: 8px 10px;
+        flex: 1;
+    }
+
+    #chartCanvas { width: 100% !important; }
+
+    /* Break-even */
+    #bepSection {
+        margin-top: 28px;
+        border-top: 1px solid rgba(255,255,255,0.2);
+        padding-top: 24px;
+        display: none;
+    }
+
+    #bepSection h2 {
+        text-align: center;
+        font-size: 18px;
+        margin-bottom: 18px;
+        opacity: 0.9;
+    }
+
+    .bep-result {
+        margin-top: 14px;
+        display: grid;
+        gap: 10px;
+    }
+
+    /* History */
+    #historySection {
+        margin-top: 28px;
+        border-top: 1px solid rgba(255,255,255,0.2);
+        padding-top: 20px;
+        display: none;
+    }
+
+    #historySection h2 {
+        font-size: 16px;
+        margin-bottom: 12px;
+        opacity: 0.85;
+    }
+
+    .hist-item {
+        background: rgba(255,255,255,0.08);
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-size: 13px;
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .hist-item:hover { background: rgba(255,255,255,0.15); }
+
+    /* Error */
+    .error-msg {
+        background: #b71c1c;
+        border-radius: 10px;
+        padding: 12px 16px;
+        font-size: 14px;
+        margin-top: 10px;
+        display: none;
+    }
+
     @media (max-width: 600px) {
-        .container {
-            width: 95%;
-            padding: 25px;
-        }
-        h1    { font-size: 24px; }
-        label { font-size: 16px; }
-        input, select { font-size: 18px; padding: 14px 12px; }
-        button { font-size: 18px; padding: 16px; }
-        .box   { font-size: 16px; padding: 14px 16px; }
-        .heading { font-size: 20px; }
+        .container { padding: 22px; }
+        h1 { font-size: 22px; }
+        label { font-size: 15px; }
+        input, select { font-size: 16px; }
+        button { font-size: 15px; }
+        .box { font-size: 15px; }
+        .comp-table { font-size: 12px; }
     }
 </style>
 </head>
 
 <body>
-<div class="container">
+<div class="container" id="mainContainer">
     <h1>Profit Calculator</h1>
 
-    <div class="field">
-        <label>Principal Amount (Rs)</label>
-        <input id="principal" type="text" placeholder="1,000,000">
+    <!-- MAIN INPUT -->
+    <div id="mainInputs">
+        <div class="field">
+            <label>Principal Amount (Rs)</label>
+            <input id="principal" type="text" placeholder="1,000,000">
+        </div>
+        <div class="field">
+            <label>Profit Rate (%)</label>
+            <input id="rate" type="number" step="any" placeholder="11.4">
+        </div>
+        <div class="field">
+            <label>WHT Category</label>
+            <select id="taxType">
+                <option value="none">Without Withholding Tax</option>
+                <option value="15">Filer (15%)</option>
+                <option value="30">Non-Filer (30%)</option>
+            </select>
+        </div>
+        <div class="checkbox-row">
+            <input type="checkbox" id="zakatCheck">
+            <label for="zakatCheck" style="margin:0">Apply Zakat (2.5% on profit)</label>
+        </div>
+        <div class="error-msg" id="mainError"></div>
+        <button class="btn-calc" onclick="calculate()">Calculate</button>
     </div>
 
-    <div class="field">
-        <label>Profit Rate (%)</label>
-        <input id="rate" type="number" step="any" placeholder="11.4">
-    </div>
-
-    <div class="field">
-        <label>WHT Category</label>
-        <select id="taxType">
-            <option value="15">Filer (15%)</option>
-            <option value="30">Non-Filer (30%)</option>
-        </select>
-    </div>
-
-    <button type="button" onclick="calculate()">Calculate</button>
-
+    <!-- MAIN RESULTS -->
     <div id="results" class="results"></div>
 
-    <div class="footer">
-        Developed by <b>Qais Mubeen</b>
+    <!-- ACTION BUTTONS (shown after result) -->
+    <div id="actionButtons" style="display:none">
+        <button class="btn-compare" onclick="startCompare()">Compare</button>
+        <button class="btn-chart"   onclick="toggleChart()">Show Chart</button>
+        <button class="btn-pdf"     onclick="exportPDF()">Export PDF</button>
+        <button class="btn-bep"     onclick="toggleBEP()">Break-Even Calculator</button>
+        <button class="btn-reset"   onclick="resetAll()">Reset</button>
     </div>
+
+    <!-- CHART SECTION -->
+    <div id="chartSection">
+        <div class="chart-controls">
+            <select id="chartType" onchange="renderChart()">
+                <option value="bar">Bar Chart</option>
+                <option value="pie">Pie Chart</option>
+            </select>
+        </div>
+        <canvas id="chartCanvas" height="260"></canvas>
+    </div>
+
+    <!-- HISTORY -->
+    <div id="historySection">
+        <h2>Recent Calculations</h2>
+        <div id="historyList"></div>
+    </div>
+
+    <!-- COMPARE SECTION -->
+    <div id="compareSection">
+        <h2>Compare — Enter Second Values</h2>
+        <div class="field">
+            <label>Principal Amount (Rs)</label>
+            <input id="principal2" type="text" placeholder="1,000,000">
+        </div>
+        <div class="field">
+            <label>Profit Rate (%)</label>
+            <input id="rate2" type="number" step="any" placeholder="12.5">
+        </div>
+        <div class="field">
+            <label>WHT Category</label>
+            <select id="taxType2">
+                <option value="none">Without Withholding Tax</option>
+                <option value="15">Filer (15%)</option>
+                <option value="30">Non-Filer (30%)</option>
+            </select>
+        </div>
+        <div class="checkbox-row">
+            <input type="checkbox" id="zakatCheck2">
+            <label for="zakatCheck2" style="margin:0">Apply Zakat (2.5% on profit)</label>
+        </div>
+        <div class="error-msg" id="compareError"></div>
+        <button class="btn-calc" onclick="runCompare()">Calculate & Compare</button>
+        <button class="btn-reset" onclick="cancelCompare()">Cancel</button>
+        <div id="compResults"></div>
+    </div>
+
+    <!-- BREAK-EVEN SECTION -->
+    <div id="bepSection">
+        <h2>Break-Even Calculator</h2>
+        <div class="field">
+            <label>Desired Monthly Income (Rs)</label>
+            <input id="bepMonthly" type="text" placeholder="50,000">
+        </div>
+        <div class="field">
+            <label>Known Principal (Rs) — to find required Rate</label>
+            <input id="bepPrincipal" type="text" placeholder="1,000,000">
+        </div>
+        <div class="field">
+            <label>Known Rate (%) — to find required Principal</label>
+            <input id="bepRate" type="number" step="any" placeholder="12">
+        </div>
+        <button class="btn-bep" onclick="calcBEP()">Calculate Break-Even</button>
+        <div class="bep-result" id="bepResult"></div>
+    </div>
+
+    <div class="footer">Developed by <b>Qais Mubeen</b></div>
 </div>
 
 <script>
-const principalInput = document.getElementById("principal");
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let lastResult = null;
+let sessionHistory = [];
+let chartInstance = null;
+let chartVisible = false;
+let bepVisible = false;
 
-principalInput.addEventListener("input", () => {
-    let raw = principalInput.value.replace(/,/g, "");
-    if (raw === "" || isNaN(raw)) return;
-    principalInput.value = Number(raw).toLocaleString();
-});
+// ─── FORMAT ──────────────────────────────────────────────────────────────────
+function fmt(num) {
+    if (num === null || num === undefined || isNaN(num)) return "—";
+    return "Rs " + parseFloat(num.toFixed(2)).toLocaleString("en-PK", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+}
 
+function fmtNum(num) {
+    return parseFloat(num.toFixed(2)).toLocaleString("en-PK", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+}
+
+// ─── PRINCIPAL AUTO-FORMAT ───────────────────────────────────────────────────
+function bindCommaFormat(id) {
+    const el = document.getElementById(id);
+    el.addEventListener("input", () => {
+        let raw = el.value.replace(/,/g, "");
+        if (raw === "" || isNaN(raw)) return;
+        let cursor = el.selectionStart;
+        el.value = Number(raw).toLocaleString();
+    });
+}
+bindCommaFormat("principal");
+bindCommaFormat("principal2");
+bindCommaFormat("bepMonthly");
+bindCommaFormat("bepPrincipal");
+
+// ─── COMPUTE RESULT OBJECT ───────────────────────────────────────────────────
+function compute(pa, pr, taxType, applyZakat) {
+    const pv_year   = pa * pr / 100;
+    const pv_month  = pv_year / 12;
+
+    let wht = 0;
+    let taxRate = 0;
+    if (taxType !== "none") {
+        taxRate = Number(taxType);
+        wht = pv_year * taxRate / 100;
+    }
+
+    let zakat = 0;
+    if (applyZakat) zakat = pv_year * 2.5 / 100;
+
+    const total_deduction = wht + zakat;
+    const net_year        = pv_year - total_deduction;
+    const net_month       = net_year / 12;
+    const total_month     = pa + net_month;
+    const total_year      = pa + net_year;
+
+    return {
+        pa, pr, taxType, taxRate, applyZakat,
+        pv_year, pv_month,
+        wht, zakat, total_deduction,
+        net_year, net_month,
+        total_month, total_year
+    };
+}
+
+// ─── RENDER RESULT BOXES ─────────────────────────────────────────────────────
+function renderResult(r) {
+    const withTax = r.taxType !== "none";
+    const taxLabel = withTax
+        ? (r.taxRate === 15 ? "Filer (15%)" : "Non-Filer (30%)")
+        : "Without Withholding Tax";
+
+    let html = `
+        <div class="box blue"><b>Principal Amount:</b> ${fmt(r.pa)}</div>
+        <div class="box blue"><b>Profit Rate:</b> ${r.pr}%</div>
+        <div class="box blue"><b>WHT Category:</b> ${taxLabel}</div>
+        ${r.applyZakat ? `<div class="box teal"><b>Zakat:</b> Applied (2.5%)</div>` : ""}
+
+        <div class="heading">Without Withholding Tax</div>
+        <div class="box purple"><b>Profit / Year:</b> ${fmt(r.pv_year)}</div>
+        <div class="box purple"><b>Profit / Month:</b> ${fmt(r.pv_month)}</div>
+    `;
+
+    if (withTax || r.applyZakat) {
+        html += `<div class="heading">Deductions</div>`;
+        if (withTax)       html += `<div class="box red"><b>WHT (${r.taxRate}%):</b> ${fmt(r.wht)}</div>`;
+        if (r.applyZakat)  html += `<div class="box teal"><b>Zakat (2.5%):</b> ${fmt(r.zakat)}</div>`;
+        html += `
+            <div class="box red"><b>Total Deductions:</b> ${fmt(r.total_deduction)}</div>
+            <div class="heading">Net Profit</div>
+            <div class="box green"><b>Net Profit / Year:</b> ${fmt(r.net_year)}</div>
+            <div class="box green"><b>Net Profit / Month:</b> ${fmt(r.net_month)}</div>
+        `;
+    }
+
+    html += `
+        <div class="box orange"><b>Total After 1 Month:</b> ${fmt(r.total_month)}</div>
+        <div class="box orange"><b>Total After 1 Year:</b> ${fmt(r.total_year)}</div>
+    `;
+
+    return html;
+}
+
+// ─── CALCULATE ───────────────────────────────────────────────────────────────
 function calculate() {
-    const pa      = Number(principalInput.value.replace(/,/g, ""));
-    const pr      = Number(document.getElementById("rate").value);
-    const taxRate = Number(document.getElementById("taxType").value);
+    const pa       = Number(document.getElementById("principal").value.replace(/,/g, ""));
+    const pr       = Number(document.getElementById("rate").value);
+    const taxType  = document.getElementById("taxType").value;
+    const applyZakat = document.getElementById("zakatCheck").checked;
+    const errEl    = document.getElementById("mainError");
 
-    if (isNaN(pa) || pa < 0 || isNaN(pr) || pr < 0) {
-        document.getElementById("results").innerHTML = "";
+    errEl.style.display = "none";
+
+    if (!pa || isNaN(pa) || pa <= 0) {
+        showError(errEl, "Please enter a valid Principal Amount.");
+        return;
+    }
+    if (!pr || isNaN(pr) || pr <= 0) {
+        showError(errEl, "Please enter a valid Profit Rate.");
         return;
     }
 
-    const pv_year     = pa * pr / 100;
-    const pv_month    = pv_year / 12;
-    const wht         = pv_year * taxRate / 100;
-    const net_year    = pv_year - wht;
-    const net_month   = net_year / 12;
-    const total_month = pa + net_month;
-    const total_year  = pa + net_year;
+    lastResult = compute(pa, pr, taxType, applyZakat);
 
-    document.getElementById("results").innerHTML = `
-        <div class="box blue"><b>Principal Amount:</b> Rs ${pa.toLocaleString()}</div>
-        <div class="box blue"><b>Profit Rate:</b> ${pr}%</div>
+    document.getElementById("results").innerHTML = renderResult(lastResult);
+    document.getElementById("actionButtons").style.display = "block";
 
-        <div class="heading">Without Withholding Tax</div>
-        <div class="box purple"><b>Profit / Year:</b> Rs ${pv_year.toFixed(2)}</div>
-        <div class="box purple"><b>Profit / Month:</b> Rs ${pv_month.toFixed(2)}</div>
+    // History
+    addHistory(lastResult);
 
-        <div class="heading">With Withholding Tax (${taxRate}%)</div>
-        <div class="box red"><b>Tax Amount:</b> Rs ${wht.toFixed(2)}</div>
+    // Re-render chart if visible
+    if (chartVisible) renderChart();
 
-        <div class="box green"><b>Net Profit / Year:</b> Rs ${net_year.toFixed(2)}</div>
-        <div class="box green"><b>Net Profit / Month:</b> Rs ${net_month.toFixed(2)}</div>
+    // Hide compare if open
+    document.getElementById("compareSection").style.display = "none";
+}
 
-        <div class="box orange"><b>Total After 1 Month:</b> Rs ${total_month.toFixed(2)}</div>
-        <div class="box orange"><b>Total After 1 Year:</b> Rs ${total_year.toFixed(2)}</div>
+// ─── HISTORY ─────────────────────────────────────────────────────────────────
+function addHistory(r) {
+    sessionHistory.unshift(r);
+    if (sessionHistory.length > 5) sessionHistory.pop();
+    renderHistory();
+    document.getElementById("historySection").style.display = "block";
+}
+
+function renderHistory() {
+    const list = document.getElementById("historyList");
+    list.innerHTML = sessionHistory.map((r, i) => `
+        <div class="hist-item" onclick="loadHistory(${i})">
+            <b>Rs ${r.pa.toLocaleString()}</b> @ ${r.pr}% &nbsp;|&nbsp;
+            Net/Month: ${fmt(r.net_month)} &nbsp;|&nbsp;
+            ${r.taxType === "none" ? "No WHT" : r.taxRate + "% WHT"}
+            ${r.applyZakat ? " + Zakat" : ""}
+        </div>
+    `).join("");
+}
+
+function loadHistory(i) {
+    lastResult = sessionHistory[i];
+    document.getElementById("results").innerHTML = renderResult(lastResult);
+    document.getElementById("actionButtons").style.display = "block";
+    if (chartVisible) renderChart();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// ─── CHART ───────────────────────────────────────────────────────────────────
+function toggleChart() {
+    chartVisible = !chartVisible;
+    const sec = document.getElementById("chartSection");
+    const btn = document.querySelector(".btn-chart");
+    sec.style.display = chartVisible ? "block" : "none";
+    btn.textContent = chartVisible ? "Hide Chart" : "Show Chart";
+    if (chartVisible && lastResult) renderChart();
+}
+
+function renderChart() {
+    if (!lastResult) return;
+    const type = document.getElementById("chartType").value;
+    const r = lastResult;
+
+    const labels = ["Principal", "Gross Profit", "Deductions", "Net Profit"];
+    const data   = [r.pa, r.pv_year, r.total_deduction, r.net_year];
+    const colors = ["#0288d1","#7b1fa2","#c62828","#2e7d32"];
+
+    if (chartInstance) chartInstance.destroy();
+
+    const ctx = document.getElementById("chartCanvas").getContext("2d");
+    chartInstance = new Chart(ctx, {
+        type: type,
+        data: {
+            labels,
+            datasets: [{
+                label: "Amount (Rs)",
+                data,
+                backgroundColor: colors,
+                borderColor: "rgba(255,255,255,0.3)",
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    labels: { color: "#fff", font: { size: 13 } }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => " Rs " + fmtNum(ctx.parsed.y ?? ctx.parsed)
+                    }
+                }
+            },
+            scales: type === "bar" ? {
+                x: { ticks: { color: "#fff" }, grid: { color: "rgba(255,255,255,0.1)" } },
+                y: { ticks: { color: "#fff" }, grid: { color: "rgba(255,255,255,0.1)" } }
+            } : {}
+        }
+    });
+}
+
+// ─── COMPARE ─────────────────────────────────────────────────────────────────
+function startCompare() {
+    if (!lastResult) {
+        alert("Please calculate first before comparing.");
+        return;
+    }
+    document.getElementById("compareSection").style.display = "block";
+    document.getElementById("compareSection").scrollIntoView({ behavior: "smooth" });
+}
+
+function cancelCompare() {
+    document.getElementById("compareSection").style.display = "none";
+    document.getElementById("compResults").innerHTML = "";
+}
+
+function runCompare() {
+    const pa2      = Number(document.getElementById("principal2").value.replace(/,/g, ""));
+    const pr2      = Number(document.getElementById("rate2").value);
+    const taxType2 = document.getElementById("taxType2").value;
+    const zakat2   = document.getElementById("zakatCheck2").checked;
+    const errEl    = document.getElementById("compareError");
+
+    errEl.style.display = "none";
+
+    if (!pa2 || isNaN(pa2) || pa2 <= 0) {
+        showError(errEl, "Please enter a valid Principal Amount for comparison.");
+        return;
+    }
+    if (!pr2 || isNaN(pr2) || pr2 <= 0) {
+        showError(errEl, "Please enter a valid Profit Rate for comparison.");
+        return;
+    }
+
+    const r1 = lastResult;
+    const r2 = compute(pa2, pr2, taxType2, zakat2);
+
+    document.getElementById("compResults").innerHTML = buildCompTable(r1, r2);
+}
+
+function buildCompTable(r1, r2) {
+    const rows = [
+        ["Principal",           r1.pa,            r2.pa],
+        ["Profit Rate",         r1.pr + "%",       r2.pr + "%",       false],
+        ["WHT Category",        whtLabel(r1),      whtLabel(r2),      false],
+        ["Zakat Applied",       r1.applyZakat?"Yes":"No", r2.applyZakat?"Yes":"No", false],
+        ["Gross Profit / Year", r1.pv_year,        r2.pv_year],
+        ["Gross Profit / Month",r1.pv_month,       r2.pv_month],
+        ["WHT Amount",          r1.wht,            r2.wht,            true, true],
+        ["Zakat Amount",        r1.zakat,          r2.zakat,          true, true],
+        ["Total Deductions",    r1.total_deduction,r2.total_deduction,true, true],
+        ["Net Profit / Year",   r1.net_year,       r2.net_year],
+        ["Net Profit / Month",  r1.net_month,      r2.net_month],
+        ["Total After 1 Month", r1.total_month,    r2.total_month],
+        ["Total After 1 Year",  r1.total_year,     r2.total_year],
+    ];
+
+    let html = `
+        <div class="comp-table-wrap">
+        <table class="comp-table">
+            <thead>
+                <tr>
+                    <th>Field</th>
+                    <th>Calculation 1</th>
+                    <th>Calculation 2</th>
+                    <th>Difference</th>
+                </tr>
+            </thead>
+            <tbody>
     `;
+
+    rows.forEach(([label, v1, v2, numeric = true, lowerBetter = false]) => {
+        let v1str, v2str, diffStr = "—", diffClass = "";
+
+        if (!numeric) {
+            v1str = v1; v2str = v2;
+        } else {
+            v1str = fmt(v1); v2str = fmt(v2);
+            const diff = v2 - v1;
+            if (Math.abs(diff) > 0.001) {
+                const better = lowerBetter ? diff < 0 : diff > 0;
+                diffClass = better ? "diff-better" : "diff-worse";
+                diffStr = (diff > 0 ? "+" : "") + "Rs " + fmtNum(Math.abs(diff));
+                if (!better) diffStr = "-Rs " + fmtNum(Math.abs(diff));
+                if (diff > 0 && !lowerBetter) diffStr = "+" + "Rs " + fmtNum(diff);
+                diffStr = (diff >= 0 ? "+" : "-") + "Rs " + fmtNum(Math.abs(diff));
+            } else {
+                diffStr = "No difference";
+            }
+        }
+
+        html += `
+            <tr>
+                <td><b>${label}</b></td>
+                <td>${v1str}</td>
+                <td>${v2str}</td>
+                <td class="${diffClass}">${diffStr}</td>
+            </tr>
+        `;
+    });
+
+    html += `</tbody></table></div>`;
+    return html;
+}
+
+function whtLabel(r) {
+    if (r.taxType === "none") return "No WHT";
+    return r.taxRate === 15 ? "Filer (15%)" : "Non-Filer (30%)";
+}
+
+// ─── BREAK-EVEN ───────────────────────────────────────────────────────────────
+function toggleBEP() {
+    bepVisible = !bepVisible;
+    const sec = document.getElementById("bepSection");
+    const btn = document.querySelector(".btn-bep");
+    sec.style.display = bepVisible ? "block" : "none";
+    btn.textContent = bepVisible ? "Hide Break-Even Calculator" : "Break-Even Calculator";
+    if (bepVisible) sec.scrollIntoView({ behavior: "smooth" });
+}
+
+function calcBEP() {
+    const monthly    = Number(document.getElementById("bepMonthly").value.replace(/,/g, ""));
+    const principal  = Number(document.getElementById("bepPrincipal").value.replace(/,/g, ""));
+    const rate       = Number(document.getElementById("bepRate").value);
+    const resultEl   = document.getElementById("bepResult");
+
+    if (!monthly || isNaN(monthly) || monthly <= 0) {
+        resultEl.innerHTML = `<div class="box red">Please enter a valid desired monthly income.</div>`;
+        return;
+    }
+
+    const annual = monthly * 12;
+    let html = "";
+
+    // Required rate given principal
+    if (principal && principal > 0) {
+        const reqRate = (annual / principal) * 100;
+        html += `
+            <div class="box blue"><b>To earn ${fmt(monthly)}/month from ${fmt(principal)}:</b></div>
+            <div class="box green"><b>Required Annual Rate:</b> ${reqRate.toFixed(4)}%</div>
+        `;
+    }
+
+    // Required principal given rate
+    if (rate && rate > 0) {
+        const reqPrincipal = (annual / rate) * 100;
+        html += `
+            <div class="box blue"><b>To earn ${fmt(monthly)}/month at ${rate}% rate:</b></div>
+            <div class="box green"><b>Required Principal:</b> ${fmt(reqPrincipal)}</div>
+        `;
+    }
+
+    if (!html) {
+        html = `<div class="box red">Enter either a Known Principal or a Known Rate (or both).</div>`;
+    }
+
+    resultEl.innerHTML = html;
+}
+
+// ─── PDF EXPORT ───────────────────────────────────────────────────────────────
+function exportPDF() {
+    if (!lastResult) return;
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: "mm", format: "a4" });
+    const W = doc.internal.pageSize.getWidth();
+    const H = doc.internal.pageSize.getHeight();
+
+    // Background
+    doc.setFillColor(15, 32, 39);
+    doc.rect(0, 0, W, H, "F");
+
+    // Title
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(20);
+    doc.setFont("helvetica", "bold");
+    doc.text("Profit Calculator — Result", W / 2, 18, { align: "center" });
+
+    doc.setFontSize(9);
+    doc.setTextColor(180, 180, 180);
+    doc.text("Developed by Qais Mubeen", W / 2, 24, { align: "center" });
+
+    let y = 34;
+    const r = lastResult;
+
+    function pdfBox(label, value, bg) {
+        doc.setFillColor(...bg);
+        doc.roundedRect(14, y, W - 28, 9, 2, 2, "F");
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "bold");
+        doc.text(label + ":", 18, y + 6);
+        doc.setFont("helvetica", "normal");
+        doc.text(value, W - 16, y + 6, { align: "right" });
+        y += 12;
+    }
+
+    function pdfHeading(text) {
+        y += 2;
+        doc.setTextColor(200, 200, 255);
+        doc.setFontSize(11);
+        doc.setFont("helvetica", "bold");
+        doc.text(text, W / 2, y + 5, { align: "center" });
+        y += 10;
+    }
+
+    const withTax = r.taxType !== "none";
+
+    pdfBox("Principal Amount", fmt(r.pa),  [2, 136, 209]);
+    pdfBox("Profit Rate",      r.pr + "%", [2, 136, 209]);
+    pdfBox("WHT Category",     whtLabel(r),[2, 136, 209]);
+    if (r.applyZakat) pdfBox("Zakat", "Applied (2.5%)", [0, 105, 92]);
+
+    pdfHeading("Without Withholding Tax");
+    pdfBox("Profit / Year",  fmt(r.pv_year),  [123, 31, 162]);
+    pdfBox("Profit / Month", fmt(r.pv_month), [123, 31, 162]);
+
+    if (withTax || r.applyZakat) {
+        pdfHeading("Deductions");
+        if (withTax)      pdfBox("WHT (" + r.taxRate + "%)", fmt(r.wht),   [198, 40, 40]);
+        if (r.applyZakat) pdfBox("Zakat (2.5%)",             fmt(r.zakat), [0, 105, 92]);
+        pdfBox("Total Deductions", fmt(r.total_deduction),                 [198, 40, 40]);
+
+        pdfHeading("Net Profit");
+        pdfBox("Net Profit / Year",  fmt(r.net_year),  [46, 125, 50]);
+        pdfBox("Net Profit / Month", fmt(r.net_month), [46, 125, 50]);
+    }
+
+    pdfBox("Total After 1 Month", fmt(r.total_month), [239, 108, 0]);
+    pdfBox("Total After 1 Year",  fmt(r.total_year),  [239, 108, 0]);
+
+    // Comparison table in PDF
+    const compResults = document.getElementById("compResults");
+    const table = compResults.querySelector(".comp-table");
+    if (table) {
+        if (y > H - 60) { doc.addPage(); doc.setFillColor(15,32,39); doc.rect(0,0,W,H,"F"); y = 14; }
+        y += 6;
+        doc.setTextColor(200,200,255);
+        doc.setFontSize(13);
+        doc.setFont("helvetica","bold");
+        doc.text("Comparison Table", W/2, y, { align:"center" });
+        y += 8;
+
+        const rows = table.querySelectorAll("tr");
+        rows.forEach((row, ri) => {
+            const cells = row.querySelectorAll("th, td");
+            if (!cells.length) return;
+            if (y > H - 14) { doc.addPage(); doc.setFillColor(15,32,39); doc.rect(0,0,W,H,"F"); y = 14; }
+            const colW = (W - 28) / 4;
+            if (ri === 0) {
+                doc.setFillColor(40,60,80);
+                doc.rect(14, y, W-28, 8, "F");
+                doc.setTextColor(255,255,255);
+                doc.setFontSize(8);
+                doc.setFont("helvetica","bold");
+            } else {
+                doc.setFillColor(ri % 2 === 0 ? 20:30, ri%2===0?40:50, ri%2===0?55:70);
+                doc.rect(14, y, W-28, 8, "F");
+                doc.setTextColor(220,220,220);
+                doc.setFontSize(8);
+                doc.setFont("helvetica","normal");
+            }
+            cells.forEach((cell, ci) => {
+                doc.text(cell.textContent.trim().substring(0,28), 16 + ci * colW, y + 5.5);
+            });
+            y += 9;
+        });
+    }
+
+    doc.save("profit-calculator-result.pdf");
+}
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+function showError(el, msg) {
+    el.textContent = msg;
+    el.style.display = "block";
+}
+
+function resetAll() {
+    lastResult = null;
+    chartVisible = false;
+    bepVisible = false;
+    if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
+    document.getElementById("principal").value = "";
+    document.getElementById("rate").value = "";
+    document.getElementById("taxType").value = "none";
+    document.getElementById("zakatCheck").checked = false;
+    document.getElementById("results").innerHTML = "";
+    document.getElementById("actionButtons").style.display = "none";
+    document.getElementById("chartSection").style.display = "none";
+    document.getElementById("compareSection").style.display = "none";
+    document.getElementById("bepSection").style.display = "none";
+    document.getElementById("compResults").innerHTML = "";
+    document.getElementById("bepResult").innerHTML = "";
+    document.querySelector(".btn-chart").textContent = "Show Chart";
+    document.querySelector(".btn-bep").textContent = "Break-Even Calculator";
 }
 </script>
-
 </body>
 </html>
